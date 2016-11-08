@@ -1,12 +1,24 @@
 package com.example.djurus.gag7;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import org.lucasr.twowayview.TwoWayView;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 
 /**
@@ -28,6 +40,13 @@ public class TrendingFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    private GagAdapter adapter;
+    private GagRAdapter adapterR;
+
+    private ArrayList<Gag> gagList = new ArrayList<>();
+    private ArrayList<Gag> trendingList = new ArrayList<>();
+    private ArrayList<Gag> recommendedList = new ArrayList<>();
 
     public TrendingFragment() {
         // Required empty public constructor
@@ -64,7 +83,38 @@ public class TrendingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_trending, container, false);
+        View v = inflater.inflate(R.layout.fragment_trending, container, false);
+
+        gagList.add(new Gag("GTR","gtr"));
+        gagList.add(new Gag("Check out my costume","costume"));
+        gagList.add(new Gag("Blizzard releases necromancer fo beastin","blizzard"));
+        gagList.add(new Gag("GTR","gtr"));
+        gagList.add(new Gag("Check out my costume","costume"));
+        gagList.add(new Gag("Blizzard releases necromancer fo beastin","blizzard"));
+        gagList.add(new Gag("GTR","gtr"));
+        gagList.add(new Gag("Check out my costume","costume"));
+        gagList.add(new Gag("Blizzard releases necromancer fo beastin","blizzard"));
+        gagList.add(new Gag("GTR","gtr"));
+        gagList.add(new Gag("Check out my costume","costume"));
+        gagList.add(new Gag("Blizzard releases necromancer fo beastin","blizzard"));
+        trendingList.add(gagList.get(0));
+        trendingList.add(gagList.get(1));
+        recommendedList.add(gagList.get(0));
+        recommendedList.add(gagList.get(1));
+        adapter = new GagAdapter(getContext(), trendingList);
+        ListView listView = (ListView) v.findViewById(android.R.id.list);
+        listView.setAdapter(adapter);
+        listView.setOnScrollListener(new InfiniteScrollListener(2) {
+            @Override
+            public void loadMore(int page, int totalItemsCount) {
+                loadTrendingData(2, page);
+                adapter.notifyDataSetChanged();
+            }
+        });
+        adapterR = new GagRAdapter(getContext(), recommendedList);
+        TwoWayView recommendedLV = (TwoWayView) v.findViewById(R.id.lvItems);
+        recommendedLV.setAdapter(adapterR);
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -105,4 +155,108 @@ public class TrendingFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+    public class GagAdapter extends ArrayAdapter<Gag> {
+        private final ArrayList<Gag> values;
+        private final Context context;
+        public GagAdapter(Context context, ArrayList<Gag> values) {
+            super(context, R.layout.listview, values);
+            this.values=values;
+            this.context=context;
+        }
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View listView = inflater.inflate(R.layout.listview, parent, false);
+            TextView gagTitle = (TextView) listView.findViewById(R.id.gagTitle);
+            ImageView gagImage = (ImageView) listView.findViewById(R.id.gagImage);
+            Gag gag = values.get(position);
+            gagTitle.setText(gag.getTitle());
+            int id = getResources().getIdentifier("com.example.djurus.gag7:drawable/" + gag.getImgSrc(), null, null);
+            gagImage.setImageResource(id);
+            return listView;
+        }
+    }
+    public class GagRAdapter extends ArrayAdapter<Gag> {
+        private final ArrayList<Gag> values;
+        private final Context context;
+        public GagRAdapter(Context context, ArrayList<Gag> values) {
+            super(context, R.layout.listview, values);
+            this.values=values;
+            this.context=context;
+        }
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if (position==values.size()-1){
+                loadRecommendedData(values.size());
+            }
+            View listView = inflater.inflate(R.layout.recommendedview, parent, false);
+            TextView gagRTitle = (TextView) listView.findViewById(R.id.gagRTitle);
+            ImageView gagRImage = (ImageView) listView.findViewById(R.id.gagRImage);
+            Gag gag = values.get(position);
+            gagRTitle.setText(gag.getTitle());
+            int id = getResources().getIdentifier("com.example.djurus.gag7:drawable/" + gag.getImgSrc(), null, null);
+            gagRImage.setImageResource(id);
+            return listView;
+        }
+    }
+    public abstract class InfiniteScrollListener implements AbsListView.OnScrollListener {
+        private int bufferItemCount = 10;
+        private int currentPage = 0;
+        private int itemCount = 0;
+        private boolean isLoading = true;
+
+        public InfiniteScrollListener(int bufferItemCount) {
+            this.bufferItemCount = bufferItemCount;
+        }
+
+        public abstract void loadMore(int page, int totalItemsCount);
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            // Do Nothing1
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+        {
+            if (totalItemCount < itemCount) {
+                this.itemCount = totalItemCount;
+                if (totalItemCount == 0) {
+                    this.isLoading = true; }
+            }
+
+            if (isLoading && (totalItemCount > itemCount)) {
+                isLoading = false;
+                itemCount = totalItemCount;
+                currentPage++;
+            }
+
+            if (!isLoading && (totalItemCount - visibleItemCount)<=(firstVisibleItem + bufferItemCount)) {
+                loadMore(currentPage + 1, totalItemCount);
+                isLoading = true;
+            }
+        }
+    }
+    public void loadTrendingData(int perPage,int page){
+        int start = perPage*(page-1);
+        for (int i=start;i<start+perPage;i++){
+            if (i<gagList.size()){
+                trendingList.add(gagList.get(i));
+            }
+
+        }
+    }
+    public void loadRecommendedData(int start){
+        for (int i=start;i<start+2;i++){
+            if (i<gagList.size()){
+                recommendedList.add(gagList.get(i));
+            }
+
+        }
+        adapterR.notifyDataSetChanged();
+    }
+
 }

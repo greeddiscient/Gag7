@@ -16,4 +16,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+    <style name="TwoWayView">
+        <item name="android:orientation">horizontal</item>
+    </style>
 </resources>

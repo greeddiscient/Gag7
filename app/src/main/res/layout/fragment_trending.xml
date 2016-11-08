@@ -10,13 +10,18 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="#000">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TRENDING"
-            android:textSize="40dp"
-            android:textStyle="bold"
-            android:textColor="#fff"/>
+        <org.lucasr.twowayview.TwoWayView
+            android:id="@+id/lvItems"
+            android:background="#000"
+            style="@style/TwoWayView"
+            android:layout_width="match_parent"
+            android:layout_height="235dp"
+            android:drawSelectorOnTop="false" />
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </ListView>
     </LinearLayout>
 
 </FrameLayout>
