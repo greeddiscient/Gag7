@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.lucasr.twowayview.TwoWayView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -41,12 +47,17 @@ public class TrendingFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private GagAdapter adapter;
-    private GagRAdapter adapterR;
+    private GagAdapter adapterFeed;
+    private GagRecommendedAdapter adapterRecommended;
 
-    private ArrayList<Gag> gagList = new ArrayList<>();
-    private ArrayList<Gag> trendingList = new ArrayList<>();
-    private ArrayList<Gag> recommendedList = new ArrayList<>();
+    private JSONObject obj;
+
+
+    private ArrayList<Gag> trendingRecommendedList = new ArrayList<>();
+    private ArrayList<Gag> trendingFeedList = new ArrayList<>();
+    private ArrayList<Gag> displayRecommendedList = new ArrayList<>();
+    private ArrayList<Gag> displayFeedList = new ArrayList<>();
+
 
     public TrendingFragment() {
         // Required empty public constructor
@@ -85,35 +96,28 @@ public class TrendingFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_trending, container, false);
 
-        gagList.add(new Gag("GTR","gtr"));
-        gagList.add(new Gag("Check out my costume","costume"));
-        gagList.add(new Gag("Blizzard releases necromancer fo beastin","blizzard"));
-        gagList.add(new Gag("GTR","gtr"));
-        gagList.add(new Gag("Check out my costume","costume"));
-        gagList.add(new Gag("Blizzard releases necromancer fo beastin","blizzard"));
-        gagList.add(new Gag("GTR","gtr"));
-        gagList.add(new Gag("Check out my costume","costume"));
-        gagList.add(new Gag("Blizzard releases necromancer fo beastin","blizzard"));
-        gagList.add(new Gag("GTR","gtr"));
-        gagList.add(new Gag("Check out my costume","costume"));
-        gagList.add(new Gag("Blizzard releases necromancer fo beastin","blizzard"));
-        trendingList.add(gagList.get(0));
-        trendingList.add(gagList.get(1));
-        recommendedList.add(gagList.get(0));
-        recommendedList.add(gagList.get(1));
-        adapter = new GagAdapter(getContext(), trendingList);
+        loadRecommendedListJSON();
+        loadFeedListJSON();
+        displayRecommendedList.add(trendingRecommendedList.get(0));
+        displayRecommendedList.add(trendingRecommendedList.get(1));
+        displayFeedList.add(trendingFeedList.get(0));
+        displayFeedList.add(trendingFeedList.get(1));
+        
+        
+        
+        adapterFeed = new GagAdapter(getContext(), displayFeedList);
         ListView listView = (ListView) v.findViewById(android.R.id.list);
-        listView.setAdapter(adapter);
+        listView.setAdapter(adapterFeed);
         listView.setOnScrollListener(new InfiniteScrollListener(2) {
             @Override
             public void loadMore(int page, int totalItemsCount) {
-                loadTrendingData(2, page);
-                adapter.notifyDataSetChanged();
+                loadFeedData(2, page);
+                adapterFeed.notifyDataSetChanged();
             }
         });
-        adapterR = new GagRAdapter(getContext(), recommendedList);
+        adapterRecommended = new GagRecommendedAdapter(getContext(), trendingRecommendedList);
         TwoWayView recommendedLV = (TwoWayView) v.findViewById(R.id.lvItems);
-        recommendedLV.setAdapter(adapterR);
+        recommendedLV.setAdapter(adapterRecommended);
         return v;
     }
 
@@ -177,10 +181,10 @@ public class TrendingFragment extends Fragment {
             return listView;
         }
     }
-    public class GagRAdapter extends ArrayAdapter<Gag> {
+    public class GagRecommendedAdapter extends ArrayAdapter<Gag> {
         private final ArrayList<Gag> values;
         private final Context context;
-        public GagRAdapter(Context context, ArrayList<Gag> values) {
+        public GagRecommendedAdapter(Context context, ArrayList<Gag> values) {
             super(context, R.layout.listview, values);
             this.values=values;
             this.context=context;
@@ -240,23 +244,71 @@ public class TrendingFragment extends Fragment {
             }
         }
     }
-    public void loadTrendingData(int perPage,int page){
+    public void loadFeedData(int perPage,int page){
         int start = perPage*(page-1);
         for (int i=start;i<start+perPage;i++){
-            if (i<gagList.size()){
-                trendingList.add(gagList.get(i));
+            if (i<trendingFeedList.size()){
+                displayFeedList.add(trendingFeedList.get(i));
             }
-
         }
     }
     public void loadRecommendedData(int start){
         for (int i=start;i<start+2;i++){
-            if (i<gagList.size()){
-                recommendedList.add(gagList.get(i));
+            if (i<trendingRecommendedList.size()){
+                displayRecommendedList.add(trendingRecommendedList.get(i));
             }
 
         }
-        adapterR.notifyDataSetChanged();
+        adapterRecommended.notifyDataSetChanged();
     }
+    public String loadJSONFromAsset() {
+        String json = "";
+        try {
 
+            InputStream is = getActivity().getAssets().open("gag7.json");
+
+            int size = is.available();
+
+            byte[] buffer = new byte[size];
+
+            is.read(buffer);
+
+            is.close();
+
+            json = new String(buffer, "UTF-8");
+
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+
+    }
+    public void loadRecommendedListJSON(){
+        try{
+            obj = new JSONObject(loadJSONFromAsset());
+            JSONArray arr= obj.getJSONObject("gags").getJSONObject("trending").getJSONArray("recommended");
+            for(int i = 0; i<arr.length();i++){
+                JSONObject gagObj= arr.getJSONObject(i);
+                trendingRecommendedList.add(new Gag(gagObj.getString("title"),gagObj.getString("imgSrc")));
+            }
+        }
+        catch(JSONException e){
+            e.printStackTrace();
+        }
+    }
+    public void loadFeedListJSON(){
+        try{
+            obj = new JSONObject(loadJSONFromAsset());
+            JSONArray arr= obj.getJSONObject("gags").getJSONObject("trending").getJSONArray("feed");
+            for(int i = 0; i<arr.length();i++){
+                JSONObject gagObj= arr.getJSONObject(i);
+                trendingFeedList.add(new Gag(gagObj.getString("title"),gagObj.getString("imgSrc")));
+            }
+        }
+        catch(JSONException e){
+            e.printStackTrace();
+        }
+    }
 }

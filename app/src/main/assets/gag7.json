@@ -1,0 +1,91 @@
+{
+  "gags":{
+      "hot":{
+        "recommended":
+          [
+            {
+              "title": "Best Motivational Poster",
+              "imgSrc": "motivational"
+            },
+            {
+              "title": "Snowden just released new leaks",
+              "imgSrc": "snowden"
+            },
+            {
+              "title": "I'm speechless",
+              "imgSrc": "speechless"
+            },
+            {
+              "title": "At least he's sorry",
+              "imgSrc": "trumpsorry"
+            },
+
+          ]
+        ,
+        "feed":[
+          {
+            "title": "Blizzard releases necromancer fo beastin",
+            "imgSrc": "blizzard"
+          },
+          {
+            "title": "What do you think of my costume",
+            "imgSrc": "costume"
+          },
+          {
+            "title": "#freedom",
+            "imgSrc": "freedom"
+          },
+          {
+            "title": "Dream Car",
+            "imgSrc": "gtr"
+          },
+        ]
+      },
+      "trending":{
+        "recommended":[
+          {
+            "title": "Best Motivational Poster",
+            "imgSrc": "motivational"
+          },
+          {
+            "title": "Snowden just released new leaks",
+            "imgSrc": "snowden"
+          },
+          {
+            "title": "I'm speechless",
+            "imgSrc": "speechless"
+          },
+          {
+            "title": "At least he's sorry",
+            "imgSrc": "trumpsorry"
+          },
+        ],
+        "feed":[
+          {
+            "title": "Blizzard releases necromancer fo beastin",
+            "imgSrc": "blizzard"
+          },
+          {
+            "title": "What do you think of my costume",
+            "imgSrc": "costume"
+          },
+          {
+            "title": "#freedom",
+            "imgSrc": "freedom"
+          },
+          {
+            "title": "Dream Car",
+            "imgSrc": "gtr"
+          },
+        ]
+      },
+      "fresh":{
+        "recommended":{
+
+        },
+        "feed":{
+
+        }
+      }
+  }
+}
