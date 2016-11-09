@@ -4,40 +4,40 @@
         "recommended":
           [
             {
-              "title": "Best Motivational Poster",
-              "imgSrc": "motivational"
+              "title": "Ladies and gentlemen, it's been an honor",
+              "imgSrc": "honor"
             },
             {
-              "title": "Snowden just released new leaks",
-              "imgSrc": "snowden"
+              "title": "After looking at the current election stats",
+              "imgSrc": "stupid"
             },
             {
-              "title": "I'm speechless",
-              "imgSrc": "speechless"
+              "title": "I hate these people",
+              "imgSrc": "novote"
             },
             {
-              "title": "At least he's sorry",
-              "imgSrc": "trumpsorry"
+              "title": "Britain right now (the rest of the world actually)",
+              "imgSrc": "trumpcard"
             },
 
           ]
         ,
         "feed":[
           {
-            "title": "Blizzard releases necromancer fo beastin",
-            "imgSrc": "blizzard"
+            "title": "Can anyone suggest cure for this hearbreak",
+            "imgSrc": "breakup"
           },
           {
-            "title": "What do you think of my costume",
-            "imgSrc": "costume"
+            "title": "As non-american",
+            "imgSrc": "notamerican"
           },
           {
-            "title": "#freedom",
-            "imgSrc": "freedom"
+            "title": "Plan on asking her out but scared just friends",
+            "imgSrc": "suicidal"
           },
           {
-            "title": "Dream Car",
-            "imgSrc": "gtr"
+            "title": "Please welcome President Clinton to the stage",
+            "imgSrc": "pleasewelcome"
           },
         ]
       },
@@ -80,12 +80,42 @@
         ]
       },
       "fresh":{
-        "recommended":{
-
-        },
-        "feed":{
-
-        }
+        "recommended":[
+          {
+            "title": "The 7 has spoken",
+            "imgSrc": "seven"
+          },
+          {
+            "title": "You are appreciated!",
+            "imgSrc": "electioncrap"
+          },
+          {
+            "title": "Maybe build a wall?",
+            "imgSrc": "buildawall"
+          },
+          {
+            "title": "Name a more iconic duo",
+            "imgSrc": "corvoemily"
+          },
+        ],
+        "feed":[
+          {
+            "title": "What a week",
+            "imgSrc": "week"
+          },
+          {
+            "title": "Well well",
+            "imgSrc": "democracy"
+          },
+          {
+            "title": "Well done you guys",
+            "imgSrc": "blackpresident"
+          },
+          {
+            "title": "Rock Hard.",
+            "imgSrc": "gneiss"
+          },
+        ]
       }
   }
 }
